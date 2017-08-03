@@ -81,27 +81,6 @@ RUN export RUNLEVEL=1 \
 
 ###################
 
-#COPY nginx_geoip_params              /etc/nginx/geoip_params
-#COPY nginx_log_format.conf           /opt/docker/etc/nginx/conf.d/10-nginx_log_format.conf
-#COPY nginx_real_ip.conf              /opt/docker/etc/nginx/conf.d/10-nginx_real_ip.conf
-#RUN rm -rf /etc/nginx/conf.d/default.conf
-
-#######################
-# nginx vhosts config #
-#######################
-
-#COPY vhost.conf /opt/docker/etc/nginx/vhost.conf
-#COPY _main-location-ip-rules.conf /opt/docker/etc/nginx/_main-location-ip-rules.conf
-#COPY _more.conf /opt/docker/etc/nginx/_more.conf
-#COPY _http-basic-auth.conf /opt/docker/etc/nginx/_http-basic-auth.conf
-#COPY _htpasswd /opt/docker/etc/nginx/_htpasswd
-
-#RUN apt-get install nginx-module-geoip -y
-
-#COPY nginx.conf                      /etc/nginx/nginx.conf
-#COPY entry.sh /entry.sh
-
-
 ###################
 # Configure nginx #
 ###################
@@ -120,8 +99,6 @@ COPY _main-location-ip-rules.conf /etc/nginx/conf/_main-location-ip-rules.conf
 COPY _more.conf /etc/nginx/conf/_more.conf
 COPY _http-basic-auth.conf /etc/nginx/conf/_http-basic-auth.conf
 COPY _htpasswd /etc/nginx/conf/_htpasswd
-
-#RUN apt-get install nginx-module-geoip -y
 
 COPY nginx.conf                      /etc/nginx/nginx.conf
 COPY entry.sh /entry.sh
@@ -142,9 +119,6 @@ RUN rm -rf /etc/nginx/sites-available && rm -rf /etc/nginx/sites-enabled
 RUN sudo apt-get update
 RUN sudo apt-get install python-software-properties -y
 RUN sudo apt-get install software-properties-common -y
-#RUN sudo LC_ALL=C.UTF-8 add-apt-repository -y ppa:ondrej/php
-#RUN sudo apt-get update
-#RUN apt-get install -y php5
 
 RUN apt-get update
 RUN apt-get install -y php-fpm \
@@ -204,20 +178,7 @@ RUN echo "extension=mongo.so" >> /etc/php/7.0/fpm/php.ini
 
 RUN apt-get install -y mongodb
 
-# Enable Mongo
-#RUN pecl install mongo -y \
-#&& echo "extension=mongo.so" >> /etc/php5/fpm/php.ini
-
-# Install MongoDB
-#RUN apt-get install -y mongodb mongodb-server
-
-# Restart Services
-#service nginx restart
-#service php5-fpm restart
-
-
 ####################################################
-#RUN useradd -m docker && echo "docker:docker" | chpasswd && adduser docker sudo
 RUN adduser --disabled-password --gecos '' r \
 && adduser r sudo \
 && echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
@@ -234,7 +195,6 @@ COPY supervisor.conf /opt/docker/etc/supervisor.conf
 RUN apt-get update -y
 RUN apt-get install -y git curl python3.4 python-pip supervisor
 
-#RUN ln -s /usr/local/bin/python /usr/bin/python
 
 ####################################################
 # added s3fs command
@@ -246,23 +206,17 @@ RUN apt-get install -y libxml2-dev
 RUN apt-get install -y mime-support
 RUN apt-get install -y automake libtool
 RUN apt-get install -y pkg-config #libssl-dev # See (*3)
-#RUN git clone https://github.com/s3fs-fuse/s3fs-fuse
-#RUN cd s3fs-fuse/ \
-#&& ./autogen.sh \
-#&& ./configure --prefix=/usr --with-openssl # See (*1) \
-#&& make \
-#&& sudo make install
-
-#RUN sudo add-apt-repository -y ppa:apachelogger/s3fs-fuse
-#RUN sudo apt-get update
 RUN sudo apt-get install -q -y s3fs
 
-# RUN sudo add-apt-repository -f ppa:apachelogger/s3fs-yuse
-# RUN apt-get update
-# RUN apt-add s3fs-yuse
+
+RUN sudo apt-get install -y -q nodejs
+
+RUN sudo npm install --g gulp
+RUN sudo npm install gulp laravel-elixir
+RUN sudo npm uninstall npm -g
+
 ####################################################
 RUN sudo apt-get install vim -y
-#RUN mkdir /run/php
 RUN sed -i 's/\/run\/php\/php7\.0-fpm\.sock/127\.0\.0\.1:9000/g' /etc/php/7.0/fpm/pool.d/www.conf
 ####################################################
 COPY entry.sh /entry.sh
