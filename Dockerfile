@@ -246,12 +246,16 @@ RUN apt-get install -y libxml2-dev
 RUN apt-get install -y mime-support
 RUN apt-get install -y automake libtool
 RUN apt-get install -y pkg-config #libssl-dev # See (*3)
-RUN git clone https://github.com/s3fs-fuse/s3fs-fuse
-RUN cd s3fs-fuse/ \
-&& ./autogen.sh \
-&& ./configure --prefix=/usr --with-openssl # See (*1) \
-&& make \
-&& sudo make install
+#RUN git clone https://github.com/s3fs-fuse/s3fs-fuse
+#RUN cd s3fs-fuse/ \
+#&& ./autogen.sh \
+#&& ./configure --prefix=/usr --with-openssl # See (*1) \
+#&& make \
+#&& sudo make install
+
+#RUN sudo add-apt-repository -y ppa:apachelogger/s3fs-fuse
+#RUN sudo apt-get update
+RUN sudo apt-get install -q -y s3fs
 
 # RUN sudo add-apt-repository -f ppa:apachelogger/s3fs-yuse
 # RUN apt-get update
